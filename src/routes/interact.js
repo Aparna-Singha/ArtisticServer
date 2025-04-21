@@ -6,6 +6,8 @@ const {
   createSave,
   removeLike,
   removeSave,
+  getLikes,
+  getSaves,
 } = require("../database/interact");
 
 const likePost = async (req, res) => {
@@ -27,6 +29,17 @@ const likePost = async (req, res) => {
   }
 }
 
+const getLikedPosts = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
+  const username = req.user.username;
+  const likedPosts = await getLikes(username);
+
+  return res.status(200).json(likedPosts);
+}
+
 const savePost = async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -46,9 +59,22 @@ const savePost = async (req, res) => {
   }
 }
 
+const getSavedPosts = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
+  const username = req.user.username;
+  const savedPosts = await getSaves(username);
+
+  return res.status(200).json(savedPosts);
+}
+
 const interactRouter = Router();
 interactRouter.get("/:postId/like", likePost);
 interactRouter.get("/:postId/save", savePost);
+interactRouter.get("/likes", getLikedPosts);
+interactRouter.get("/saves", getSavedPosts);
 
 module.exports = {
   interactRouter,
