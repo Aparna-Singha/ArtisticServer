@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { createArt, getArts } = require("../database/art");
+const { checkLike, checkSave } = require("../database/interact");
 
 const postArt = async (req, res) => {
   const { data } = req.body;
@@ -16,6 +17,7 @@ const postArt = async (req, res) => {
 
   const newArt = createArt({
     data,
+    postId: data.id,
     user: req.user.username,
   });
 
@@ -33,6 +35,18 @@ const postArt = async (req, res) => {
 
 const getAllArts = async (req, res) => {
   const arts = await getArts();
+
+  for (const art of arts) {
+    const { postId } = art;
+    
+    const liked = await checkLike(req.user.username, postId);
+    const saved = await checkSave(req.user.username, postId);
+    
+    art.interactions = {
+      liked,
+      saved,
+    };
+  }
 
   if (!arts) return res.status(500).json({
     status: 'error',
