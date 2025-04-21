@@ -19,7 +19,7 @@ const login = async (req, res) => {
 
   return res.status(200).json({
     status: 'success',
-    token: 'fake-jwt-token',
+    token: user.username,
     user: {
       username: user.username,
       email: user.email,
@@ -58,7 +58,7 @@ const register = async (req, res) => {
 
   return res.status(201).json({
     status: 'success',
-    token: 'fake-jwt-token',
+    token: createdUser.username,
     user: {
       username: createdUser.username,
       email: createdUser.email,
