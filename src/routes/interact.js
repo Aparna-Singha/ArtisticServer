@@ -9,6 +9,7 @@ const {
   getLikes,
   getSaves,
 } = require("../database/interact");
+const { getArt } = require("../database/art");
 
 const likePost = async (req, res) => {
   if (!req.user) {
@@ -35,7 +36,23 @@ const getLikedPosts = async (req, res) => {
   }
   
   const username = req.user.username;
-  const likedPosts = await getLikes(username);
+  const likes = await getLikes(username);
+
+  const likedPosts = [];
+
+  for (const like of likes) {
+    const { postId } = like;
+    const post = await getArt(postId);
+    const liked = await checkLike(username, postId);
+    const saved = await checkSave(username, postId);
+    
+    post.interactions = {
+      liked,
+      saved,
+    };
+    
+    if (post) likedPosts.push(post);
+  }
 
   return res.status(200).json(likedPosts);
 }
@@ -65,7 +82,23 @@ const getSavedPosts = async (req, res) => {
   }
   
   const username = req.user.username;
-  const savedPosts = await getSaves(username);
+  const saves = await getSaves(username);
+
+  const savedPosts = [];
+
+  for (const save of saves) {
+    const { postId } = save;
+    const post = await getArt(postId);
+    const liked = await checkLike(username, postId);
+    const saved = await checkSave(username, postId);
+    
+    post.interactions = {
+      liked,
+      saved,
+    };
+    
+    if (post) savedPosts.push(post);
+  }
 
   return res.status(200).json(savedPosts);
 }
