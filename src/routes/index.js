@@ -11,7 +11,7 @@ apiRouter.use('/art', artRouter);
 apiRouter.use('/interact', interactRouter);
 
 apiRouter.get('/', (_, res) => {
-  res.send('Hello <strong>Artistic View API</strong>!');
+  res.status(200).json({success: true, message: 'Hello Artistic View API!'});
 });
 
 module.exports = {
