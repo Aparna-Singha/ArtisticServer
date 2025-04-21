@@ -36,16 +36,18 @@ const postArt = async (req, res) => {
 const getAllArts = async (req, res) => {
   const arts = await getArts();
 
-  for (const art of arts) {
-    const { postId } = art;
+  if (req.user) {
+    for (const art of arts) {
+      const { postId } = art;
     
-    const liked = await checkLike(req.user.username, postId);
-    const saved = await checkSave(req.user.username, postId);
+      const liked = await checkLike(req.user.username, postId);
+      const saved = await checkSave(req.user.username, postId);
     
-    art.interactions = {
-      liked,
-      saved,
-    };
+      art.interactions = {
+        liked,
+        saved,
+      };
+    }
   }
 
   if (!arts) return res.status(500).json({
