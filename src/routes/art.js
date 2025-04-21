@@ -32,11 +32,6 @@ const postArt = async (req, res) => {
 };
 
 const getAllArts = async (req, res) => {
-  if (!req.authorized) return res.status(401).json({
-    status: 'error',
-    message: 'Unauthorized',
-  });
-
   const arts = await getArts();
 
   if (!arts) return res.status(500).json({
